@@ -8,7 +8,7 @@ public class Alo {
 
         // Simulating user typing "bye"
         System.out.println("____________________________________________________________");
-        System.out.println("Alrighty! Nice helping you. Bye!"); // Exit message
+        System.out.println("Alrighty! Nice helping you. Bye! **************************************************"); // Exit message
         System.out.println("____________________________________________________________");
 
     }
