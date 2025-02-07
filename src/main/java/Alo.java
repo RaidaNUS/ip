@@ -3,41 +3,11 @@ import java.util.ArrayList;
 
 public class Alo {
 
-    private static class Task {
-        private String toDo;
-        private boolean isDone;
-
-        public Task(String toDo) {
-            this.toDo = toDo;
-            this.isDone = false;
-        }
-
-        public void markAsDone() {
-            this.isDone = true;
-        }
-
-        public void unmarkAsDone() {
-            this.isDone = false;
-        }
-
-        @Override
-        public String toString() {
-            String Marking;
-            if (isDone) {
-                Marking = "X";
-            } else {
-                Marking = " ";
-            }
-            return "[" + Marking + "] " + toDo;
-        }
-
-    }
-
     // Learnt from: https://github.com/nus-cs2113-AY2425S2/ip/pull/76/files
 
     private static ArrayList<Task> tasks = new ArrayList<>();
 
-
+    //Methods for the ouput and task creation confimation prompts
     private static void Greeting() {
         System.out.println("____________________________________________________________");
         System.out.println("Hi there! I'm Alo, my name means LIGHT!"); // Greet the user
@@ -93,14 +63,75 @@ public class Alo {
         } catch (NumberFormatException e) {
             System.out.println("Invalid task number my dear.");
         }
+    }
+
+    private static void makeToDo (String job){
+        //add the talk into the array
+        tasks.add(new ToDo(job));
+        System.out.println("____________________________________________________________");
+        System.out.println("Aye Aye! I've added this task to the list:");
+        System.out.println("    " + tasks.get(tasks.size()-1));
+        System.out.println("Now you have " + tasks.size() + " tasks in the list.");
+        System.out.println("____________________________________________________________");
+    }
+
+    private static void makeDeadline (String job){
+        //add the talk into the array
+
+        String[] deadlineDate = job.split("/by", 2);
+        if(deadlineDate.length < 2){
+            System.out.println("Invalid input format of the deadline. Please input the deadline as <TASK> /by <time/date>. Thanks love!");
+            return;
+        }
+
+        tasks.add(new Deadline(deadlineDate[0], deadlineDate[1]));
+        System.out.println("____________________________________________________________");
+        System.out.println("Take note of the deadline i've added to the task:");
+        System.out.println("    " + tasks.get(tasks.size()-1));
+        System.out.println("Now you have " + tasks.size() + " tasks in the list.");
+        System.out.println("____________________________________________________________");
+    }
+    private static void makeEvent(String job){
+        String[] eventDate = job.split("/from | /to", 3);
+
+        if(eventDate.length<3){
+            System.out.println("Invalid input format of the event. Please input the event as <TASK> /from <time/date> /to <time/date>. Thanks love!");
+            return;
+        }
+
+        tasks.add(new Event(eventDate[0], eventDate[1], eventDate[2]));
+        System.out.println("____________________________________________________________");
+        System.out.println("I've added the event to the task list:");
+        System.out.println("    " + tasks.get(tasks.size()-1));
+        System.out.println("Now you have " + tasks.size() + " tasks in the list.");
+        System.out.println("____________________________________________________________");
 
     }
 
+    //Method that takes care of adding tasks
+
     private static void addTask(String inputs) {
-        tasks.add(new Task(inputs));
-        System.out.println("____________________________________________________________");
-        System.out.println("         added: " + inputs);
-        System.out.println("____________________________________________________________");
+        String words[] = inputs.split(" ", 2);
+        String command = words[0].toLowerCase();
+        String job = words.length>1 ? words[1]: "";
+
+        switch (command){
+
+            case "todo":
+                makeToDo(job);
+                break;
+
+            case "deadline":
+                makeDeadline(job);
+                break;
+
+            case "event":
+                makeEvent(job);
+                break;
+
+            default:
+                System.out.println("Invalid Command Word. Try using deadline, event, todo as initiators for tasks! ^_^");
+        }
     }
 
 
