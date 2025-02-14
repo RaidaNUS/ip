@@ -1,4 +1,6 @@
-public class Event extends Task{
+package alo.task;
+
+public class Event extends Task {
     String from;
     String to;
 
