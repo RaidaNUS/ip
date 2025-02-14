@@ -3,7 +3,7 @@ import java.util.ArrayList;
 
 public class Alo {
 
-    // Learnt from: https://github.com/nus-cs2113-AY2425S2/ip/pull/76/files
+    // Learnt now to make use of Switch Case to make code better in style from: https://github.com/nus-cs2113-AY2425S2/ip/pull/76/files
 
     private static ArrayList<Task> tasks = new ArrayList<>();
 
@@ -31,8 +31,12 @@ public class Alo {
         System.out.println("____________________________________________________________");
     }
 
-    private static void markTask(String argument) {
+    private static void markTask(String argument) throws InvalidTaskNumExceptions {
         try {
+            if (argument.isEmpty()) {
+                throw new InvalidTaskNumExceptions();
+            }
+
             int taskIndexNum = Integer.parseInt(argument) - 1;
             if (taskIndexNum >= 0 && taskIndexNum < tasks.size()) {
                 tasks.get(taskIndexNum).markAsDone();
@@ -40,16 +44,20 @@ public class Alo {
                 System.out.println("Cool! I've marked it as done! Congrats for finishing task: ");
                 System.out.println("    " + tasks.get(taskIndexNum));
                 System.out.println("____________________________________________________________");
-            } else {
-                System.out.println("Task you want to mark down as done is out of range Dear.");
             }
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid task number my dear.");
+        } catch (TaskExceptions e) {
+            System.out.println("____________________________________________________________");
+            System.out.println(e.getMessage());
+            System.out.println("____________________________________________________________");
         }
     }
 
-    private static void unmarkTask(String argument) {
+    private static void unmarkTask(String argument) throws InvalidTaskNumExceptions {
         try {
+            if (argument.isEmpty()) {
+                throw new InvalidTaskNumExceptions();
+            }
+
             int taskIndexNum = Integer.parseInt(argument) - 1;
             if (taskIndexNum >= 0 && taskIndexNum < tasks.size()) {
                 tasks.get(taskIndexNum).unmarkAsDone();
@@ -57,11 +65,11 @@ public class Alo {
                 System.out.println("Alrighty! I've marked it as not done.");
                 System.out.println("    " + tasks.get(taskIndexNum));
                 System.out.println("____________________________________________________________");
-            } else {
-                System.out.println("Task you want to unmark as done is out of range Dear.");
             }
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid task number my dear.");
+        } catch (TaskExceptions e) {
+            System.out.println("____________________________________________________________");
+            System.out.println(e.getMessage());
+            System.out.println("____________________________________________________________");
         }
     }
 
@@ -130,36 +138,50 @@ public class Alo {
 
     }
 
-    //Method that takes care of adding tasks
+    //Method that takes care of adding tasks and if NO Task Description is given
 
-    private static void addTask(String inputs) {
+    private static void addTask(String inputs) throws MissingTaskDescripExceptions, InvalidCommandExceptions {
         String words[] = inputs.split(" ", 2);
         String command = words[0].toLowerCase();
         String job = words.length>1 ? words[1]: "";
 
-        switch (command){
+        try{
+            switch (command){
 
-            case "todo":
-                makeToDo(job);
-                break;
+                case "todo":
+                    if(job.isEmpty()){
+                        throw new MissingTaskDescripExceptions(command);
+                    }
+                    makeToDo(job);
+                    break;
 
-            case "deadline":
-                makeDeadline(job);
-                break;
+                case "deadline":
+                    if(job.isEmpty()){
+                        throw new MissingTaskDescripExceptions(command);
+                    }
+                    makeDeadline(job);
+                    break;
 
-            case "event":
-                makeEvent(job);
-                break;
+                case "event":
+                    if(job.isEmpty()){
+                        throw new MissingTaskDescripExceptions(command);
+                    }
+                    makeEvent(job);
+                    break;
 
-            default:
-                System.out.println("____________________________________________________________");
-                System.out.println("Invalid or No Command Word. Try using deadline, event, todo as initiators for tasks! ^_^");
-                System.out.println("____________________________________________________________");
+                default:
+                    throw new InvalidCommandExceptions();
+            }
+        }catch(MissingTaskDescripExceptions | InvalidCommandExceptions e){
+            System.out.println("____________________________________________________________");
+            System.out.println(e.getMessage());
+            System.out.println("____________________________________________________________");
+
         }
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InvalidTaskNumExceptions, InvalidCommandExceptions, MissingTaskDescripExceptions {
 
         //Greeting the user
         Greeting();
