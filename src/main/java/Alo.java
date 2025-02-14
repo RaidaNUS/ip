@@ -66,6 +66,13 @@ public class Alo {
     }
 
     private static void makeToDo (String job){
+
+        if(job.trim().isEmpty()){
+            System.out.println("____________________________________________________________");
+            System.out.println("Please enter a valid task to log a 'todo' task Command Dear.");
+            System.out.println("____________________________________________________________");
+            return;
+        }
         //add the talk into the array
         tasks.add(new ToDo(job));
         System.out.println("____________________________________________________________");
@@ -79,8 +86,16 @@ public class Alo {
         //add the talk into the array
 
         String[] deadlineDate = job.split("/by", 2);
+
         if(deadlineDate.length < 2){
             System.out.println("Invalid input format of the deadline. Please input the deadline as <TASK> /by <time/date>. Thanks love!");
+            return;
+        }
+
+        if(job.trim().isEmpty()){
+            System.out.println("____________________________________________________________");
+            System.out.println("Please enter a valid task to log a 'deadline' task Command Dear.");
+            System.out.println("____________________________________________________________");
             return;
         }
 
@@ -96,6 +111,13 @@ public class Alo {
 
         if(eventDate.length<3){
             System.out.println("Invalid input format of the event. Please input the event as <TASK> /from <time/date> /to <time/date>. Thanks love!");
+            return;
+        }
+
+        if(job.trim().isEmpty()){
+            System.out.println("____________________________________________________________");
+            System.out.println("Please enter a valid task to log a 'event' task Command Dear.");
+            System.out.println("____________________________________________________________");
             return;
         }
 
@@ -130,7 +152,9 @@ public class Alo {
                 break;
 
             default:
-                System.out.println("Invalid Command Word. Try using deadline, event, todo as initiators for tasks! ^_^");
+                System.out.println("____________________________________________________________");
+                System.out.println("Invalid or No Command Word. Try using deadline, event, todo as initiators for tasks! ^_^");
+                System.out.println("____________________________________________________________");
         }
     }
 
@@ -154,6 +178,7 @@ public class Alo {
 
                 case "bye":
                     exitProgram();
+                    scan.close();
                     return;
 
                 case "list":
