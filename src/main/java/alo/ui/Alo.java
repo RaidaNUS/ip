@@ -1,3 +1,14 @@
+
+//Package Importing
+package alo.ui;
+import alo.exceptions.InvalidCommandExceptions;
+import alo.exceptions.InvalidTaskNumExceptions;
+import alo.exceptions.MissingTaskDescripExceptions;
+import alo.exceptions.TaskExceptions;
+import alo.task.Deadline;
+import alo.task.Event;
+import alo.task.Task;
+import alo.task.ToDo;
 import java.util.Scanner;
 import java.util.ArrayList;
 
@@ -10,7 +21,7 @@ public class Alo {
     //Methods for the ouput and task creation confimation prompts
     private static void Greeting() {
         System.out.println("____________________________________________________________");
-        System.out.println("Hi there! I'm Alo, my name means LIGHT!"); // Greet the user
+        System.out.println("Hi there! I'm alo.ui.Alo, my name means LIGHT!"); // Greet the user
         System.out.println("How may I be of assistance to you today?");
         System.out.println("____________________________________________________________");
     }
@@ -138,7 +149,7 @@ public class Alo {
 
     }
 
-    //Method that takes care of adding tasks and if NO Task Description is given
+    //Method that takes care of adding tasks and if NO alo.task.Task Description is given
 
     private static void addTask(String inputs) throws MissingTaskDescripExceptions, InvalidCommandExceptions {
         String words[] = inputs.split(" ", 2);
