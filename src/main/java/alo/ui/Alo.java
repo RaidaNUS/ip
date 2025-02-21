@@ -125,6 +125,7 @@ public class Alo {
         System.out.println("Now you have " + tasks.size() + " tasks in the list.");
         System.out.println("____________________________________________________________");
     }
+
     private static void makeEvent(String job){
         String[] eventDate = job.split("/from | /to", 3);
 
@@ -147,6 +148,39 @@ public class Alo {
         System.out.println("Now you have " + tasks.size() + " tasks in the list.");
         System.out.println("____________________________________________________________");
 
+    }
+
+
+    //Deleting a Task:
+
+    private static void deleteTask(String argument) throws InvalidTaskNumExceptions{
+        try{
+            if(argument.isEmpty()){
+                throw new InvalidTaskNumExceptions();
+            }
+
+            int taskIndexNum = Integer.parseInt(argument)-1;
+
+            if(taskIndexNum>=0 && taskIndexNum<tasks.size()){
+                Task removedTask = tasks.remove(taskIndexNum);
+                System.out.println("____________________________________________________________");
+                System.out.println("Noted! I've removed this task for you:");
+                System.out.println("    " + removedTask);
+                System.out.println("Now you have " + tasks.size() + " tasks in the list.");
+                System.out.println("____________________________________________________________");
+            }else{
+                throw new InvalidTaskNumExceptions();
+            }
+
+        }catch (NumberFormatException e){
+            System.out.println("____________________________________________________________");
+            System.out.println("Invalid task number! Please provide a valid number.");
+            System.out.println("____________________________________________________________");
+        }catch (TaskExceptions e){
+            System.out.println("____________________________________________________________");
+            System.out.println(e.getMessage());
+            System.out.println("____________________________________________________________");
+        }
     }
 
     //Method that takes care of adding tasks and if NO alo.task.Task Description is given
@@ -180,10 +214,14 @@ public class Alo {
                     makeEvent(job);
                     break;
 
+                case "delete":
+                    deleteTask(job);
+                    break;
+
                 default:
                     throw new InvalidCommandExceptions();
             }
-        }catch(MissingTaskDescripExceptions | InvalidCommandExceptions e){
+        }catch(MissingTaskDescripExceptions | InvalidCommandExceptions | InvalidTaskNumExceptions e){
             System.out.println("____________________________________________________________");
             System.out.println(e.getMessage());
             System.out.println("____________________________________________________________");
