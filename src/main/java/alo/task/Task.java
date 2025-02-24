@@ -1,3 +1,5 @@
+package alo.task;
+
 public class Task {
 
     private String description;
