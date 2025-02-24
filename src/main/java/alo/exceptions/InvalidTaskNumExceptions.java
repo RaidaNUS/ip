@@ -2,7 +2,7 @@ package alo.exceptions;
 
 public class InvalidTaskNumExceptions extends TaskExceptions {
     public InvalidTaskNumExceptions(){
-        super("Invalid task number my dear. T_T");
+        super("OH NO! Invalid task number my dear. T_T");
     }
 }
 
