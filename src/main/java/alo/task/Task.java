@@ -18,6 +18,11 @@ public class Task {
         this.isDone = false;
     }
 
+    public boolean getIsDone() {
+        return isDone;
+    }
+
+
     @Override
     public String toString() {
         String Marking;
@@ -29,4 +34,7 @@ public class Task {
         return "[" + Marking + "] " + description;
     }
 
+    public String toFileString() {
+        return description;
+    }
 }

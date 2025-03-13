@@ -12,11 +12,107 @@ import alo.task.ToDo;
 
 import java.util.HashMap;
 import java.util.Scanner;
+import java.io.IOException;
+import java.util.Map;
 import java.util.ArrayList;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 public class Alo {
 
     private static final String LINE = "____________________________________________________________";
+
+    private static final String FILE_PATH = "data/tasks.txt";
+
+    // Save all tasks to file
+    private static void saveTasksToFile() {
+        File file = new File(FILE_PATH);
+
+        try {
+            // Ensure the directory exists
+            file.getParentFile().mkdirs();
+            FileWriter writer = new FileWriter(file);
+
+            for (Map.Entry<Integer, Task> entry : tasks.entrySet()) {
+                writer.write(formatTaskForFile(entry.getKey(), entry.getValue()) + System.lineSeparator());
+            }
+
+            writer.close();
+        } catch (IOException e) {
+            System.out.println("Error saving tasks to file: " + e.getMessage());
+        }
+    }
+
+    // Convert Task to file format
+    private static String formatTaskForFile(int taskId, Task task) {
+        String type;
+        if (task instanceof ToDo) {
+            type = "T";
+        } else if (task instanceof Deadline) {
+            type = "D";
+        } else if (task instanceof Event) {
+            type = "E";
+        } else {
+            return null;
+        }
+
+        return type + " | " + (task.getIsDone() ? "1" : "0") + " | " + task.toFileString();
+    }
+
+
+    private static void loadTasksFromFile() {
+        File file = new File(FILE_PATH);
+        if (!file.exists()) {
+            return; // No saved tasks, nothing to load
+        }
+
+        try {
+            Scanner scanner = new Scanner(file);
+            while (scanner.hasNextLine()) {
+                String taskLine = scanner.nextLine();
+                Task task = parseTaskFromFile(taskLine);
+                if (task != null) {
+                    tasks.put(taskCounter++, task);
+                }
+            }
+            scanner.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("Error loading tasks from file: " + e.getMessage());
+        }
+    }
+
+    // Parse a task from a file line
+    private static Task parseTaskFromFile(String line) {
+        String[] parts = line.split(" \\| "); // Split by " | "
+
+        if (parts.length < 3) {
+            return null; // Corrupt line
+        }
+
+        String type = parts[0];  // Task type: T, D, or E
+        boolean isDone = parts[1].equals("1");
+        String description = parts[2];
+
+        Task task;
+
+        if (type.equals("T")) {
+            task = new ToDo(description);
+        } else if (type.equals("D") && parts.length == 4) { // Deadline Task
+            task = new Deadline(description, parts[3]);
+        } else if (type.equals("E") && parts.length == 5) { // Event Task
+            task = new Event(description, parts[3], parts[4]);
+        } else {
+            return null; // Corrupt data
+        }
+
+        if (isDone) {
+            task.markAsDone();
+        }
+        return task;
+    }
+
 
     // Learnt now to make use of Switch Case to make code better in style from: https://github.com/nus-cs2113-AY2425S2/ip/pull/76/files
 
@@ -27,7 +123,7 @@ public class Alo {
     //Methods for the ouput and task creation confimation prompts
     private static void Greeting() {
         System.out.println(LINE);
-        System.out.println("Hi there! I'm alo.ui.Alo, my name means LIGHT!"); // Greet the user
+        System.out.println("Hi there! I'm Alo, my name means LIGHT!"); // Greet the user
         System.out.println("How may I be of assistance to you today?");
         System.out.println(LINE);
     }
@@ -42,79 +138,108 @@ public class Alo {
     private static void listTasks() {
         System.out.println(LINE);
         System.out.println("Here ya are. This is your list. Enjoy!");
-        if(tasks.isEmpty()){
+
+        if (tasks.isEmpty()) {
             System.out.println("Your List is empty darling \' v '/");
-        }else{
-            for (int i = 0; i < tasks.size(); i += 1) {
-                System.out.println("      " + (i + 1) + ". " + tasks.get(i));
+        } else {
+            for (Map.Entry<Integer, Task> entry : tasks.entrySet()) {
+                System.out.println("      " + entry.getKey() + ". " + entry.getValue().toString());
             }
         }
         System.out.println(LINE);
     }
 
-    private static void markTask(String argument) throws InvalidTaskNumExceptions {
+
+    private static void markTask(String argument) {
         try {
             if (argument.isEmpty()) {
-                throw new InvalidTaskNumExceptions();
+                System.out.println(LINE);
+                System.out.println("Please enter a valid task number.");
+                System.out.println(LINE);
+                return;  // Just return instead of throwing an exception
             }
 
             int taskIndexNum = Integer.parseInt(argument);
-            if (tasks.containsKey(taskIndexNum)) {
-                tasks.get(taskIndexNum).markAsDone();
+            if (!tasks.containsKey(taskIndexNum)) {  // Task number does not exist
                 System.out.println(LINE);
-                System.out.println("Cool! I've marked it as done! Congrats for finishing task: ");
-                System.out.println("    " + tasks.get(taskIndexNum));
+                System.out.println("OH NO! Invalid task number. Please enter a valid task number dear T_T.");
+                System.out.println("Existing tasks: " + tasks.keySet());
                 System.out.println(LINE);
-            }else{
-                throw new InvalidTaskNumExceptions();
+                return;  // Return instead of throwing an exception
             }
+
+            tasks.get(taskIndexNum).markAsDone();
+
+            System.out.println(LINE);
+            System.out.println("Cool! I've marked it as done! Congrats for finishing task: ");
+            System.out.println("    " + tasks.get(taskIndexNum));
+            System.out.println(LINE);
+            saveTasksToFile();
+
         } catch (NumberFormatException e) {
             System.out.println(LINE);
-            System.out.println("Invalid Task Number! You need to enter the correct Task Number you wish to Mark as done /;v;/ ");
+            System.out.println("You need to enter the correct Task Number you wish to Mark |;-;|");
             System.out.println(LINE);
         }
     }
 
-    private static void unmarkTask(String argument) throws InvalidTaskNumExceptions {
+    private static void unmarkTask(String argument) {
         try {
             if (argument.isEmpty()) {
-                throw new InvalidTaskNumExceptions();
+                System.out.println(LINE);
+                System.out.println("Please enter a valid task number, dear T_T.");
+                System.out.println(LINE);
+                return;  // Just return instead of throwing an exception
             }
 
             int taskIndexNum = Integer.parseInt(argument);
-            if (tasks.containsKey(taskIndexNum)) {
-                tasks.get(taskIndexNum).unmarkAsDone();
+            if (!tasks.containsKey(taskIndexNum)) {  // Task number does not exist
                 System.out.println(LINE);
-                System.out.println("Alrighty! I've marked it as not done.");
-                System.out.println("    " + tasks.get(taskIndexNum));
+                System.out.println("OH NO! Invalid task number. Please enter a valid task number dear T_T.");
+                System.out.println("Existing tasks: " + tasks.keySet());
                 System.out.println(LINE);
-            }else{
-                throw new InvalidTaskNumExceptions();
+                return;  // Return instead of throwing an exception
             }
+
+            tasks.get(taskIndexNum).unmarkAsDone();
+
+            System.out.println(LINE);
+            System.out.println("Alrighty! I've marked it as not done.");
+            System.out.println("    " + tasks.get(taskIndexNum));
+            System.out.println(LINE);
+            saveTasksToFile();
+
         } catch (NumberFormatException e) {
             System.out.println(LINE);
-            System.out.println("Invalid Task Number! You need to enter the correct Task Number you wish to UN-Mark |*-*|");
+            System.out.println("You need to enter the correct Task Number you wish to UN-Mark |*-*|");
             System.out.println(LINE);
         }
     }
 
-    private static void makeToDo (String job){
-
-        if(job.trim().isEmpty()){
+    private static void makeToDo(String job) {
+        if (job.trim().isEmpty()) {
             System.out.println(LINE);
-            System.out.println("Please enter a valid task to log a 'todo' task Command Dear.");
+            System.out.println("Please enter a valid task to log a 'todo' task Command dear!");
             System.out.println(LINE);
             return;
         }
-        //add the talk into the array
-        tasks.put(taskCounter, new ToDo(job));
+
+        // Create the task properly
+        Task task = new ToDo(job);
+
+        // Store it with correct ID
+        tasks.put(taskCounter, task);
+
         System.out.println(LINE);
         System.out.println("Aye Aye! I've added this task to the list:");
-        System.out.println("    " + tasks.get(tasks.get(taskCounter)));
+        System.out.println("    " + tasks.get(taskCounter));
         System.out.println("Now you have " + tasks.size() + " tasks in the list.");
         System.out.println(LINE);
-        taskCounter=+1;
+
+        taskCounter+=1; // Increment correctly
+        saveTasksToFile();
     }
+
 
     private static void makeDeadline (String job){
         //add the talk into the array
@@ -122,7 +247,9 @@ public class Alo {
         String[] deadlineDate = job.split("/by", 2);
 
         if(deadlineDate.length < 2){
+            System.out.println(LINE);
             System.out.println("Invalid input format of the deadline. Please input the deadline as <TASK> /by <time/date>. Thanks love!");
+            System.out.println(LINE);
             return;
         }
 
@@ -139,7 +266,8 @@ public class Alo {
         System.out.println("    " + tasks.get(taskCounter));
         System.out.println("Now you have " + tasks.size() + " tasks in the list.");
         System.out.println(LINE);
-        taskCounter=+1;
+        taskCounter+=1;
+        saveTasksToFile();
     }
     private static void makeEvent(String job){
         String[] eventDate = job.split("/from | /to", 3);
@@ -162,7 +290,8 @@ public class Alo {
         System.out.println("    " + tasks.get(taskCounter));
         System.out.println("Now you have " + tasks.size() + " tasks in the list.");
         System.out.println(LINE);
-        taskCounter=+1;
+        taskCounter+=1;
+        saveTasksToFile();
 
     }
 
@@ -242,7 +371,7 @@ public class Alo {
     }
 
     public static void main(String[] args) throws InvalidTaskNumExceptions, InvalidCommandExceptions, MissingTaskDescripExceptions {
-
+        loadTasksFromFile();
         //Greeting the user
         Greeting();
 
