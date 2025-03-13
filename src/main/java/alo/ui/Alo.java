@@ -9,37 +9,47 @@ import alo.task.Deadline;
 import alo.task.Event;
 import alo.task.Task;
 import alo.task.ToDo;
+
+import java.util.HashMap;
 import java.util.Scanner;
 import java.util.ArrayList;
 
 public class Alo {
 
+    private static final String LINE = "____________________________________________________________";
+
     // Learnt now to make use of Switch Case to make code better in style from: https://github.com/nus-cs2113-AY2425S2/ip/pull/76/files
 
-    private static ArrayList<Task> tasks = new ArrayList<>();
+
+    private static HashMap<Integer, Task> tasks = new HashMap<>();
+    private static int taskCounter = 1;
 
     //Methods for the ouput and task creation confimation prompts
     private static void Greeting() {
-        System.out.println("____________________________________________________________");
+        System.out.println(LINE);
         System.out.println("Hi there! I'm alo.ui.Alo, my name means LIGHT!"); // Greet the user
         System.out.println("How may I be of assistance to you today?");
-        System.out.println("____________________________________________________________");
+        System.out.println(LINE);
     }
 
 
     private static void exitProgram() {
-        System.out.println("____________________________________________________________");
+        System.out.println(LINE);
         System.out.println("Great Helping You! Ciao ^_^");
-        System.out.println("____________________________________________________________");
+        System.out.println(LINE);
     }
 
     private static void listTasks() {
-        System.out.println("____________________________________________________________");
+        System.out.println(LINE);
         System.out.println("Here ya are. This is your list. Enjoy!");
-        for (int i = 0; i < tasks.size(); i += 1) {
-            System.out.println("      " + (i + 1) + ". " + tasks.get(i));
+        if(tasks.isEmpty()){
+            System.out.println("Your List is empty darling \' v '/");
+        }else{
+            for (int i = 0; i < tasks.size(); i += 1) {
+                System.out.println("      " + (i + 1) + ". " + tasks.get(i));
+            }
         }
-        System.out.println("____________________________________________________________");
+        System.out.println(LINE);
     }
 
     private static void markTask(String argument) throws InvalidTaskNumExceptions {
@@ -48,18 +58,20 @@ public class Alo {
                 throw new InvalidTaskNumExceptions();
             }
 
-            int taskIndexNum = Integer.parseInt(argument) - 1;
-            if (taskIndexNum >= 0 && taskIndexNum < tasks.size()) {
+            int taskIndexNum = Integer.parseInt(argument);
+            if (tasks.containsKey(taskIndexNum)) {
                 tasks.get(taskIndexNum).markAsDone();
-                System.out.println("____________________________________________________________");
+                System.out.println(LINE);
                 System.out.println("Cool! I've marked it as done! Congrats for finishing task: ");
                 System.out.println("    " + tasks.get(taskIndexNum));
-                System.out.println("____________________________________________________________");
+                System.out.println(LINE);
+            }else{
+                throw new InvalidTaskNumExceptions();
             }
-        } catch (TaskExceptions e) {
-            System.out.println("____________________________________________________________");
-            System.out.println(e.getMessage());
-            System.out.println("____________________________________________________________");
+        } catch (NumberFormatException e) {
+            System.out.println(LINE);
+            System.out.println("Invalid Task Number! You need to enter the correct Task Number you wish to Mark as done /;v;/ ");
+            System.out.println(LINE);
         }
     }
 
@@ -69,36 +81,39 @@ public class Alo {
                 throw new InvalidTaskNumExceptions();
             }
 
-            int taskIndexNum = Integer.parseInt(argument) - 1;
-            if (taskIndexNum >= 0 && taskIndexNum < tasks.size()) {
+            int taskIndexNum = Integer.parseInt(argument);
+            if (tasks.containsKey(taskIndexNum)) {
                 tasks.get(taskIndexNum).unmarkAsDone();
-                System.out.println("____________________________________________________________");
+                System.out.println(LINE);
                 System.out.println("Alrighty! I've marked it as not done.");
                 System.out.println("    " + tasks.get(taskIndexNum));
-                System.out.println("____________________________________________________________");
+                System.out.println(LINE);
+            }else{
+                throw new InvalidTaskNumExceptions();
             }
-        } catch (TaskExceptions e) {
-            System.out.println("____________________________________________________________");
-            System.out.println(e.getMessage());
-            System.out.println("____________________________________________________________");
+        } catch (NumberFormatException e) {
+            System.out.println(LINE);
+            System.out.println("Invalid Task Number! You need to enter the correct Task Number you wish to UN-Mark |*-*|");
+            System.out.println(LINE);
         }
     }
 
     private static void makeToDo (String job){
 
         if(job.trim().isEmpty()){
-            System.out.println("____________________________________________________________");
+            System.out.println(LINE);
             System.out.println("Please enter a valid task to log a 'todo' task Command Dear.");
-            System.out.println("____________________________________________________________");
+            System.out.println(LINE);
             return;
         }
         //add the talk into the array
-        tasks.add(new ToDo(job));
-        System.out.println("____________________________________________________________");
+        tasks.put(taskCounter, new ToDo(job));
+        System.out.println(LINE);
         System.out.println("Aye Aye! I've added this task to the list:");
-        System.out.println("    " + tasks.get(tasks.size()-1));
+        System.out.println("    " + tasks.get(tasks.get(taskCounter)));
         System.out.println("Now you have " + tasks.size() + " tasks in the list.");
-        System.out.println("____________________________________________________________");
+        System.out.println(LINE);
+        taskCounter=+1;
     }
 
     private static void makeDeadline (String job){
@@ -112,18 +127,19 @@ public class Alo {
         }
 
         if(job.trim().isEmpty()){
-            System.out.println("____________________________________________________________");
+            System.out.println(LINE);
             System.out.println("Please enter a valid task to log a 'deadline' task Command Dear.");
-            System.out.println("____________________________________________________________");
+            System.out.println(LINE);
             return;
         }
 
-        tasks.add(new Deadline(deadlineDate[0], deadlineDate[1]));
-        System.out.println("____________________________________________________________");
+        tasks.put(taskCounter, new Deadline(deadlineDate[0], deadlineDate[1]));
+        System.out.println(LINE);
         System.out.println("Take note of the deadline i've added to the task:");
-        System.out.println("    " + tasks.get(tasks.size()-1));
+        System.out.println("    " + tasks.get(taskCounter));
         System.out.println("Now you have " + tasks.size() + " tasks in the list.");
-        System.out.println("____________________________________________________________");
+        System.out.println(LINE);
+        taskCounter=+1;
     }
     private static void makeEvent(String job){
         String[] eventDate = job.split("/from | /to", 3);
@@ -134,19 +150,44 @@ public class Alo {
         }
 
         if(job.trim().isEmpty()){
-            System.out.println("____________________________________________________________");
+            System.out.println(LINE);
             System.out.println("Please enter a valid task to log a 'event' task Command Dear.");
-            System.out.println("____________________________________________________________");
+            System.out.println(LINE);
             return;
         }
 
-        tasks.add(new Event(eventDate[0], eventDate[1], eventDate[2]));
-        System.out.println("____________________________________________________________");
+        tasks.put(taskCounter, new Event(eventDate[0], eventDate[1], eventDate[2]));
+        System.out.println(LINE);
         System.out.println("I've added the event to the task list:");
-        System.out.println("    " + tasks.get(tasks.size()-1));
+        System.out.println("    " + tasks.get(taskCounter));
         System.out.println("Now you have " + tasks.size() + " tasks in the list.");
-        System.out.println("____________________________________________________________");
+        System.out.println(LINE);
+        taskCounter=+1;
 
+    }
+
+    private static void deleteTask(String argument) throws InvalidTaskNumExceptions {
+        try {
+            if (argument.isEmpty()) {
+                throw new InvalidTaskNumExceptions();
+            }
+
+            int taskIndexNum = Integer.parseInt(argument);
+            if (tasks.containsKey(taskIndexNum)) {
+                Task removedTask = tasks.remove(taskIndexNum);
+                System.out.println(LINE);
+                System.out.println("Take note of the DELETED task:");
+                System.out.println("    " + removedTask);
+                System.out.println("Now you have " + tasks.size() + "  tasks in the list.");
+                System.out.println(LINE);
+            } else {
+                throw new InvalidTaskNumExceptions();
+            }
+        } catch (NumberFormatException e) {
+            System.out.println(LINE);
+            System.out.println("Invalid task number! Please a Correct Task Number for me >.<");
+            System.out.println(LINE);
+        }
     }
 
     //Method that takes care of adding tasks and if NO alo.task.Task Description is given
@@ -163,6 +204,7 @@ public class Alo {
                     if(job.isEmpty()){
                         throw new MissingTaskDescripExceptions(command);
                     }
+
                     makeToDo(job);
                     break;
 
@@ -180,14 +222,22 @@ public class Alo {
                     makeEvent(job);
                     break;
 
+                case "delete":
+                    if(job.isEmpty()){
+                        throw new MissingTaskDescripExceptions(command);
+                    }
+                    deleteTask(job);
+                    break;
+
                 default:
                     throw new InvalidCommandExceptions();
             }
         }catch(MissingTaskDescripExceptions | InvalidCommandExceptions e){
-            System.out.println("____________________________________________________________");
+            System.out.println(LINE);
             System.out.println(e.getMessage());
-            System.out.println("____________________________________________________________");
-
+            System.out.println(LINE);
+        }catch (InvalidTaskNumExceptions e) {
+            throw new RuntimeException(e);
         }
     }
 
