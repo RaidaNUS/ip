@@ -20,11 +20,22 @@ import java.io.FileWriter;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
+
+
+/**
+ * The `Alo` class represents a **task manager program** that supports adding, deleting,
+ * marking, unmarking, and finding tasks.
+ */
 public class Alo {
 
-    private static final String LINE = "____________________________________________________________";
+    // Learnt now to make use of Switch Case to make code better in style from: https://github.com/nus-cs2113-AY2425S2/ip/pull/76/files
 
+
+    private static final String LINE = "____________________________________________________________";
     private static final String FILE_PATH = "data/tasks.txt";
+    private static HashMap<Integer, Task> tasks = new HashMap<>();
+    private static int taskCounter = 1;
+
 
     // Save all tasks to file
     private static void saveTasksToFile() {
@@ -46,6 +57,8 @@ public class Alo {
     }
 
     // Convert Task to file format
+    //TaskID is the Number of the task in the list.
+    //task is the task object
     private static String formatTaskForFile(int taskId, Task task) {
         String type;
         if (task instanceof ToDo) {
@@ -61,7 +74,7 @@ public class Alo {
         return type + " | " + (task.getIsDone() ? "1" : "0") + " | " + task.toFileString();
     }
 
-
+    //Loads tasks from the saved file upon startup.
     private static void loadTasksFromFile() {
         File file = new File(FILE_PATH);
         if (!file.exists()) {
@@ -114,13 +127,10 @@ public class Alo {
     }
 
 
-    // Learnt now to make use of Switch Case to make code better in style from: https://github.com/nus-cs2113-AY2425S2/ip/pull/76/files
-
-
-    private static HashMap<Integer, Task> tasks = new HashMap<>();
-    private static int taskCounter = 1;
 
     //Methods for the ouput and task creation confimation prompts
+
+    //Greeting Prompt
     private static void Greeting() {
         System.out.println(LINE);
         System.out.println("Hi there! I'm Alo, my name means LIGHT!"); // Greet the user
@@ -128,13 +138,14 @@ public class Alo {
         System.out.println(LINE);
     }
 
-
+    //Farewell prompt
     private static void exitProgram() {
         System.out.println(LINE);
         System.out.println("Great Helping You! Ciao ^_^");
         System.out.println(LINE);
     }
 
+    //Lists all the Tasks
     private static void listTasks() {
         System.out.println(LINE);
         System.out.println("Here ya are. This is your list. Enjoy!");
@@ -149,7 +160,7 @@ public class Alo {
         System.out.println(LINE);
     }
 
-
+    //Marks tasks as done using 'x'
     private static void markTask(String argument) {
         try {
             if (argument.isEmpty()) {
@@ -183,6 +194,7 @@ public class Alo {
         }
     }
 
+    //Unmarks tasks as not done by removing 'x'
     private static void unmarkTask(String argument) {
         try {
             if (argument.isEmpty()) {
@@ -216,6 +228,7 @@ public class Alo {
         }
     }
 
+    //Makes tasks in the list called To Dos
     private static void makeToDo(String job) {
         if (job.trim().isEmpty()) {
             System.out.println(LINE);
@@ -240,7 +253,7 @@ public class Alo {
         saveTasksToFile();
     }
 
-
+    //Makes tasks with deadlines
     private static void makeDeadline (String job){
         //add the talk into the array
 
@@ -269,6 +282,8 @@ public class Alo {
         taskCounter+=1;
         saveTasksToFile();
     }
+
+    //Makes tasks that are events with time constraints
     private static void makeEvent(String job){
         String[] eventDate = job.split("/from | /to", 3);
 
@@ -295,6 +310,7 @@ public class Alo {
 
     }
 
+    //Deletes any unwanted task from the list
     private static void deleteTask(String argument) throws InvalidTaskNumExceptions {
         try {
             if (argument.isEmpty()) {
@@ -319,8 +335,7 @@ public class Alo {
         }
     }
 
-    //Method that takes care of adding tasks and if NO alo.task.Task Description is given
-
+    //Detects key word inputs and following instructions to be placed in the list
     private static void addTask(String inputs) throws MissingTaskDescripExceptions, InvalidCommandExceptions {
         String words[] = inputs.split(" ", 2);
         String command = words[0].toLowerCase();
@@ -370,6 +385,7 @@ public class Alo {
         }
     }
 
+    //Finds specific words in the list and displays all the tasks that may contain the specific word
     private static void findTask(String argument) {
         System.out.println(LINE);
         System.out.println("Here are ALL the matching tasks in your list |^ . ^ | :");
@@ -389,6 +405,7 @@ public class Alo {
         System.out.println(LINE);
     }
 
+    //Main method that starts the program
     public static void main(String[] args) throws InvalidTaskNumExceptions, InvalidCommandExceptions, MissingTaskDescripExceptions {
         loadTasksFromFile();
         //Greeting the user
