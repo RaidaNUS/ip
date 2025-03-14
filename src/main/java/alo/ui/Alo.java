@@ -370,6 +370,25 @@ public class Alo {
         }
     }
 
+    private static void findTask(String argument) {
+        System.out.println(LINE);
+        System.out.println("Here are ALL the matching tasks in your list |^ . ^ | :");
+        boolean found = false;
+        int index = 1;
+        for (Map.Entry<Integer, Task> entry : tasks.entrySet()) {
+            if (entry.getValue().getDescription().toLowerCase().contains(argument.toLowerCase())) {
+                System.out.println(index + ". " + entry.getValue());
+                found = true;
+                index++;
+            }
+        }
+
+        if (!found) {
+            System.out.println("Sorry NO matching tasks found |v . v|. Try another keyword!");
+        }
+        System.out.println(LINE);
+    }
+
     public static void main(String[] args) throws InvalidTaskNumExceptions, InvalidCommandExceptions, MissingTaskDescripExceptions {
         loadTasksFromFile();
         //Greeting the user
@@ -402,6 +421,10 @@ public class Alo {
 
                 case "unmark":
                     unmarkTask(arguments);
+                    break;
+
+                case "find":
+                    findTask(arguments);
                     break;
 
                 default:
