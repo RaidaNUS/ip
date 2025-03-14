@@ -1,5 +1,6 @@
 package alo.task;
 
+//Class Deadline
 public class Deadline extends Task {
     protected String by;
 

@@ -23,8 +23,7 @@ import java.util.Scanner;
 
 
 /**
- * The `Alo` class represents a **task manager program** that supports adding, deleting,
- * marking, unmarking, and finding tasks.
+ * The `Alo` class represents a **task manager program** that supports adding, deleting, marking, unmarking, and finding tasks.
  */
 public class Alo {
 
@@ -128,12 +127,12 @@ public class Alo {
 
 
 
-    //Methods for the ouput and task creation confimation prompts
+    //Methods for the output and task creation confirmation prompts
 
-    //Greeting Prompt
+    //Greeting Prompt at begining
     private static void Greeting() {
         System.out.println(LINE);
-        System.out.println("Hi there! I'm Alo, my name means LIGHT!"); // Greet the user
+        System.out.println("Hi there! I'm Alo , my name means LIGHT!"); // Greet the user
         System.out.println("How may I be of assistance to you today?");
         System.out.println(LINE);
     }
