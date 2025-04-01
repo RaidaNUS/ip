@@ -115,7 +115,7 @@ Here ya are. This is your list. Enjoy!
   👉 [Download Java Here](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html)
 
 ### **Download ALO**
-1. Go to the ALO GitHub Releases
+1. Go to the [ALO GitHub Releases](https://github.com/RaidaNUS/ip/releases)
 2. Download the latest `.jar` file.
 
 ### **Running ALO**
