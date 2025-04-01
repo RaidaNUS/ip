@@ -121,4 +121,4 @@ Here ya are. This is your list. Enjoy!
 ### **Running ALO**
 Run the chatbot using:
 ```sh
-java -jar alo.jar
+java -jar ALO.jar
