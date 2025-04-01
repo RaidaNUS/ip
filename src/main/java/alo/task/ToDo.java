@@ -1,6 +1,7 @@
 package alo.task;
 
 //Class ToDo
+//Creates Todos in the list
 public class ToDo extends Task {
     public ToDo(String description){
         super(description);
